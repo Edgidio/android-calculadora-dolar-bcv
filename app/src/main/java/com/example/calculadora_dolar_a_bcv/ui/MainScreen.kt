@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -41,12 +42,13 @@ import java.util.*
 
 @Composable
 fun MainScreen(
-    viewModel: MainViewModel = viewModel()
+    mainViewModel: MainViewModel,
+    onOpenDrawer: () -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val selectedCurrency by viewModel.selectedCurrency.collectAsState()
-    val bolivaresInput by viewModel.bolivaresInput.collectAsState()
-    val dollarsInput by viewModel.dollarsInput.collectAsState()
+    val uiState by mainViewModel.uiState.collectAsState()
+    val selectedCurrency by mainViewModel.selectedCurrency.collectAsState()
+    val bolivaresInput by mainViewModel.bolivaresInput.collectAsState()
+    val dollarsInput by mainViewModel.dollarsInput.collectAsState()
     
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -59,7 +61,8 @@ fun MainScreen(
         ) {
             // Header with BCV logo
             HeaderSection(
-                onRefresh = { viewModel.loadRates() }
+                onRefresh = { mainViewModel.loadRates() },
+                onOpenDrawer = onOpenDrawer
             )
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -67,7 +70,7 @@ fun MainScreen(
             // Currency selector
             CurrencySelector(
                 selectedCurrency = selectedCurrency,
-                onCurrencySelected = { viewModel.selectCurrency(it) }
+                onCurrencySelected = { mainViewModel.selectCurrency(it) }
             )
             
             Spacer(modifier = Modifier.height(24.dp))
@@ -80,7 +83,7 @@ fun MainScreen(
                 is UiState.Success -> {
                     val rates = (uiState as UiState.Success).rates
                     SuccessView(
-                        viewModel = viewModel,
+                        viewModel = mainViewModel,
                         selectedCurrency = selectedCurrency,
                         bolivaresInput = bolivaresInput,
                         dollarsInput = dollarsInput,
@@ -90,7 +93,7 @@ fun MainScreen(
                 is UiState.Error -> {
                     ErrorView(
                         message = (uiState as UiState.Error).message,
-                        onRetry = { viewModel.loadRates() }
+                        onRetry = { mainViewModel.loadRates() }
                     )
                 }
             }
@@ -103,7 +106,8 @@ fun MainScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HeaderSection(
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    onOpenDrawer: () -> Unit
 ) {
     var isRefreshing by remember { mutableStateOf(false) }
     val rotation by animateFloatAsState(
@@ -122,6 +126,20 @@ fun HeaderSection(
             )
             .padding(top = 48.dp, bottom = 32.dp)
     ) {
+        // Menu Button (Top Left)
+        IconButton(
+            onClick = onOpenDrawer,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(top = 8.dp, start = 16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Menu,
+                contentDescription = "Menu",
+                tint = Color.White
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -165,7 +183,7 @@ fun HeaderSection(
             },
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(top = 40.dp, end = 16.dp)
+                .padding(top = 8.dp, end = 16.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Refresh,

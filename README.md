@@ -1,7 +1,5 @@
 # Dólar BCV - Calculadora de Tasas
 
-![Logo de la App](app/src/main/res/drawable/logo_bcv.png)
-
 **Dólar BCV** es una aplicación Android intuitiva y eficiente diseñada para mantenerte al día con las tasas de cambio en Venezuela. Con un enfoque en la simplicidad y la precisión, esta herramienta es esencial para cualquier persona que necesite realizar conversiones rápidas entre Bolívares (Bs) y Dólares ($) utilizando las tasas oficiales y del mercado.
 
 ## Galeria y Comparativa
@@ -45,3 +43,5 @@ Nuestro objetivo es ofrecer una experiencia de usuario superior, limpia y sin in
     * Haz clic en el botón de "Run".
 
 ## Licencia
+
+´
