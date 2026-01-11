@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Dólar BCV</string>
+    <string name="title_app">Calculadora de Dólar</string>
+    
+    <!-- Currency Types -->
+    <string name="usd_oficial">USD Oficial</string>
+    <string name="eur_oficial">EUR Oficial</string>
+    <string name="paralelo">Paralelo</string>
+    
+    <!-- Labels -->
+    <string name="bolivares">Bolívares (Bs)</string>
+    <string name="dolares">Dólares ($)</string>
+    <string name="tasa_actual">Tasa Actual</string>
+    <string name="cambio">Cambio</string>
+    <string name="ultima_actualizacion">Última actualización</string>
+    <string name="actualizar">Actualizar</string>
+    
+    <!-- Input hints -->
+    <string name="ingrese_bolivares">Ingrese monto en Bs</string>
+    <string name="ingrese_dolares">Ingrese monto en $</string>
+    
+    <!-- Messages -->
+    <string name="cargando">Cargando tasas…</string>
+    <string name="error_conexion">Error al obtener tasas. Verifica tu conexión.</string>
+    <string name="sin_datos">Sin datos disponibles</string>
+</resources>
