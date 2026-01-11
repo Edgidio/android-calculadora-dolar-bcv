@@ -42,12 +42,57 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+enum class AuthScreen {
+    Login,
+    Register,
+    MainContent // Authenticated
+}
+
+enum class MainScreenType {
+    Calculator,
+    Shopping
+}
+
 @Composable
 fun AppContent() {
+    // Auth State
+    var authState by remember { mutableStateOf(AuthScreen.Login) }
+    
+    // Main Content State (Drawer)
+    var currentMainScreen by remember { mutableStateOf(MainScreenType.Calculator) }
+
+    Surface(modifier = Modifier.fillMaxSize(), color = BackgroundLight) {
+        when (authState) {
+            AuthScreen.Login -> {
+                com.example.calculadora_dolar_a_bcv.ui.LoginScreen(
+                    onLoginSuccess = { authState = AuthScreen.MainContent },
+                    onNavigateToRegister = { authState = AuthScreen.Register }
+                )
+            }
+            AuthScreen.Register -> {
+                com.example.calculadora_dolar_a_bcv.ui.RegisterScreen(
+                    onRegisterSuccess = { authState = AuthScreen.MainContent },
+                    onNavigateToLogin = { authState = AuthScreen.Login }
+                )
+            }
+            AuthScreen.MainContent -> {
+                AuthenticatedContent(
+                    currentScreen = currentMainScreen,
+                    onScreenChange = { currentMainScreen = it }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AuthenticatedContent(
+    currentScreen: MainScreenType,
+    onScreenChange: (MainScreenType) -> Unit
+) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    var currentScreen by remember { mutableStateOf(Screen.Calculator) }
     
     // Shared MainViewModel for rates
     val mainViewModel: MainViewModel = viewModel()
@@ -67,11 +112,11 @@ fun AppContent() {
                 // Navigation Items
                 NavigationDrawerItem(
                     label = { Text(text = "Calculadora Dólar") },
-                    selected = currentScreen == Screen.Calculator,
+                    selected = currentScreen == MainScreenType.Calculator,
                     onClick = {
                         scope.launch { 
                             drawerState.close() 
-                            currentScreen = Screen.Calculator
+                            onScreenChange(MainScreenType.Calculator)
                         }
                     },
                     icon = { Icon(Icons.Default.Calculate, contentDescription = null) },
@@ -87,11 +132,11 @@ fun AppContent() {
                 
                 NavigationDrawerItem(
                     label = { Text(text = "Calculadora de Compra") },
-                    selected = currentScreen == Screen.Shopping,
+                    selected = currentScreen == MainScreenType.Shopping,
                     onClick = {
                         scope.launch { 
                             drawerState.close() 
-                            currentScreen = Screen.Shopping
+                            onScreenChange(MainScreenType.Shopping)
                         }
                     },
                     icon = { Icon(Icons.Default.ShoppingCart, contentDescription = null) },
@@ -111,11 +156,11 @@ fun AppContent() {
         
         Surface(modifier = contentModifier, color = BackgroundLight) {
              when (currentScreen) {
-                Screen.Calculator -> MainScreen(
+                MainScreenType.Calculator -> MainScreen(
                     mainViewModel = mainViewModel,
                     onOpenDrawer = { scope.launch { drawerState.open() } }
                 )
-                Screen.Shopping -> {
+                MainScreenType.Shopping -> {
                      Scaffold(
                         topBar = {
                             CenterAlignedTopAppBar(
@@ -184,9 +229,4 @@ fun DrawerHeader() {
             )
         }
     }
-}
-
-enum class Screen {
-    Calculator,
-    Shopping
 }
